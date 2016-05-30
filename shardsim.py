@@ -39,7 +39,7 @@ def make_ring(nodes, vnodes):
 def pad_ring(ring):
     return ([Vnode(0., ring[0].node())]
             + ring
-            + [Vnode(1., ring[-1].node())])
+            + [Vnode(1., ring[0].node())])
 
 # converts a ring to a dict node->IntervalSet
 def make_node_intervals(ring):

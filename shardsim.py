@@ -67,7 +67,7 @@ def node_overcommit(ring):
 
 
 # converts a ring to a dict (node, shard)->IntervalSet
-def make_shard_intervals(ring):
+def make_shard_intervals_static(ring):
     node_intervals = make_node_intervals(ring)
     shard_ranges = dict()
     for x in range(shards):
@@ -80,7 +80,8 @@ def make_shard_intervals(ring):
     return ret
 
 # returns a dict (node, shard)->load for a given ring
-def shard_loads(ring, shards):
+# make_shard_intervals: lambda: ring return ((node, shard)->IntervalSet)
+def shard_loads(ring, shards, make_shard_intervals):
     ret = defaultdict(float)
     for node_shard, iset in make_shard_intervals(ring).items():
         for ival in iset:
@@ -89,10 +90,17 @@ def shard_loads(ring, shards):
 
 # returns the shard overcommit: the ratio between the shard with the
 # highest load to the "average" shard
-def shard_overcommit(ring, shards):
-    loads = shard_loads(ring, shards)
+# make_shard_intervals: lambda: ring return ((node, shard)->IntervalSet)
+def shard_overcommit(ring, shards, make_shard_intervals):
+    loads = shard_loads(ring, shards, make_shard_intervals)
     return max(loads.values()) * len(loads)
 
+
+make_shard_intervals = make_shard_intervals_static
+
+algorithms = {
+    'static': make_shard_intervals_static,
+}
 
 argp = argparse.ArgumentParser('Simulate Scylla cluster load imbalance')
 argp.add_argument('--nodes', '-n', metavar='N', type=int, default=5, dest='nodes',
@@ -101,16 +109,19 @@ argp.add_argument('--vnodes', '-v', metavar='N', type=int, default=32, dest='vno
                   help='Number of vnodes per node')
 argp.add_argument('--shards', '-s', metavar='N', type=int, default=12, dest='shards',
                   help='Number of shards per node')
+argp.add_argument('--algorithm', '-a', metavar='ALG', type=str, default='static', dest='alg',
+                  help='select sharding algorithm ({})'.format(algorithms.keys()))
 opts = argp.parse_args()
 
 nodes = opts.nodes 
 vnodes = opts.vnodes
 shards = opts.shards
+make_shard_intervals = algorithms[opts.alg]
 
 print('{nodes} nodes, {vnodes} vnodes, {shards} shards'.format(**globals()))
 
 ring = make_ring(nodes, vnodes)
 
 print('maximum node overcommit:  {}'.format(node_overcommit(ring)))
-print('maximum shard overcommit: {}'.format(shard_overcommit(ring, shards)))
+print('maximum shard overcommit: {}'.format(shard_overcommit(ring, shards, make_shard_intervals)))
 

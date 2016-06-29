@@ -59,11 +59,11 @@ def ring_loads(ring):
             ret[node] += ival.upper_value - ival.lower_value
     return ret
 
-# returns the node imbalance: the ratio between the node with the
-# highest load to the node with the lowest load
-def node_imbalance(ring):
-    loads = ring_loads(ring).values()
-    return max(loads) / min(loads)
+# returns the node overcommit: the ratio between the node with the
+# highest load to the "average node"
+def node_overcommit(ring):
+    loads = ring_loads(ring)
+    return max(loads.values()) * len(loads)
 
 
 # converts a ring to a dict (node, shard)->IntervalSet
@@ -87,11 +87,11 @@ def shard_loads(ring, shards):
             ret[node_shard] += ival.upper_value - ival.lower_value
     return ret
 
-# returns the node imbalance: the ratio between the node with the
-# highest load to the node with the lowest load
-def shard_imbalance(ring, shards):
-    loads = shard_loads(ring, shards).values()
-    return max(loads) / min(loads)
+# returns the shard overcommit: the ratio between the shard with the
+# highest load to the "average" shard
+def shard_overcommit(ring, shards):
+    loads = shard_loads(ring, shards)
+    return max(loads.values()) * len(loads)
 
 
 argp = argparse.ArgumentParser('Simulate Scylla cluster load imbalance')
@@ -111,6 +111,6 @@ print('{nodes} nodes, {vnodes} vnodes, {shards} shards'.format(**globals()))
 
 ring = make_ring(nodes, vnodes)
 
-print('maximum node imbalance:  {}'.format(node_imbalance(ring)))
-print('maximum shard imbalance: {}'.format(shard_imbalance(ring, shards)))
+print('maximum node overcommit:  {}'.format(node_overcommit(ring)))
+print('maximum shard overcommit: {}'.format(shard_overcommit(ring, shards)))
 

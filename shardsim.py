@@ -69,14 +69,18 @@ def node_overcommit(ring):
 # converts a ring to a dict (node, shard)->IntervalSet
 def make_shard_intervals_static(ring):
     node_intervals = make_node_intervals(ring)
-    shard_ranges = dict()
-    for x in range(shards):
-        shard_ranges[x] = interval.openclosed(x/shards, (x+1)/shards)
+    shard_ranges = {x: IntervalSet()
+                    for x in range(shards)}
+    delta = 1 / (shards * 2**ignorebits)
+    pos = 0
+    for rep in range(2**ignorebits):
+        for x in range(shards):
+            shard_ranges[x].add(interval.openclosed(pos, pos + delta))
+            pos += delta
     ret = dict()
     for node, node_ivals in node_intervals.items():
-        for shard, shard_ival in shard_ranges.items():
-            iset = IntervalSet([shard_ival])
-            ret[(node, shard)] = node_ivals.intersection(iset)
+        for shard, shard_iset in shard_ranges.items():
+            ret[(node, shard)] = node_ivals.intersection(shard_iset)
     return ret
 
 # returns a dict (node, shard)->load for a given ring
@@ -109,6 +113,8 @@ argp.add_argument('--vnodes', '-v', metavar='N', type=int, default=32, dest='vno
                   help='Number of vnodes per node')
 argp.add_argument('--shards', '-s', metavar='N', type=int, default=12, dest='shards',
                   help='Number of shards per node')
+argp.add_argument('--ignore-msb-bits', '-b', metavar='N', type=int, default=8, dest='ignorebits',
+                  help='Number of shards per node')
 argp.add_argument('--algorithm', '-a', metavar='ALG', type=str, default='static', dest='alg',
                   help='select sharding algorithm ({})'.format(algorithms.keys()))
 opts = argp.parse_args()
@@ -116,6 +122,7 @@ opts = argp.parse_args()
 nodes = opts.nodes 
 vnodes = opts.vnodes
 shards = opts.shards
+ignorebits = opts.ignorebits
 make_shard_intervals = algorithms[opts.alg]
 
 print('{nodes} nodes, {vnodes} vnodes, {shards} shards'.format(**globals()))

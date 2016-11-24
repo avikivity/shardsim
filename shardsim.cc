@@ -109,6 +109,7 @@ ring_loads(set<vnode> ring) {
     for (auto node_iset : make_node_intervals(ring)) {
         auto&& node = node_iset.first;
         auto&& iset = node_iset.second;
+        ret[node] = 0;
         for (auto ival : iset) {
             ret[node] += ival.upper()- ival.lower();
         }
@@ -160,6 +161,7 @@ shard_loads(set<vnode> ring, unsigned shards, make_shard_interval_fn make_shard_
     for (auto node_shard_iset : make_shard_intervals(ring)) {
         auto&& node_shard = node_shard_iset.first;
         auto&& iset = node_shard_iset.second;
+        ret[node_shard] = 0;
         for (auto ival : iset) {
             ret[node_shard] += ival.upper() - ival.lower();
         }

@@ -196,10 +196,15 @@ int main(int ac, char** av) {
                 ("ignore-msb-bits,b", bpo::value<unsigned>()->default_value(8), "Number of token MSB bits to ignore for sharding")
                 ("algorithm,a", bpo::value<string>()->default_value("static"),
                         "select sharding algorithm ({})" /*'.format(algorithms.keys()) */)
+                ("help,h", "show this help")
                 ;
         auto vm = bpo::variables_map();
         bpo::store(bpo::parse_command_line(ac, av, desc), vm);
         notify(vm);
+        if (vm.count("help")) {
+            std::cout << desc << "\n";
+            return 1;
+        }
         auto nodes = vm["nodes"].as<unsigned>();
         auto vnodes = vm["vnodes"].as<unsigned>();
         shards = vm["shards"].as<unsigned>();
@@ -212,6 +217,9 @@ int main(int ac, char** av) {
         std::cout << boost::format("maximum node overcommit:  %g\n") % node_overcommit(ring);
         std::cout << boost::format("maximum shard overcommit: %f\n") % shard_overcommit(ring, shards, make_shard_intervals);
         return 0;
+    } catch (bpo::error& e) {
+        std::cout << "Bad parameters, try --help (" << e.what() << ")\n";
+        return 1;
     } catch (...) {
         std::cout << "something bad happened\n";
         return 1;

@@ -2,7 +2,7 @@
 
 ## Background
 
-Both [ScyllaDB](https://www.scylladb.com) and [Cassandra](https://cassandra.apache.com) automatically distribute data across nodes based on a randomized algorithm. ScyllaDB in addition distributes data within a node among cores (using a static algorithm). These distributions are susceptible to over-utilization of a node or a core; since a cluster in general runs at the speed of the slowest node, this has significant applications on throughput.
+Both [ScyllaDB](https://www.scylladb.com) and [Cassandra](https://cassandra.apache.org) automatically distribute data across nodes based on a randomized algorithm. ScyllaDB in addition distributes data within a node among cores (using a static algorithm). These distributions are susceptible to over-utilization of a node or a core; since a cluster in general runs at the speed of the slowest node, this has significant applications on throughput.
 
 Shardsim is a program that simulates the node- and core- data distribution algorithm with various parameters.
 

@@ -35,14 +35,14 @@ struct node {
 namespace std {
 template <>
 struct hash<node> {
-    auto operator()(node x) const { return hash<unsigned>()(x.id); }
+    size_t operator()(node x) const { return hash<unsigned>()(x.id); }
 };
 }
 
 struct vnode {
     double token;
     node owner;
-    auto as_tuple() const {
+    std::tuple<double, node> as_tuple() const {
         return std::make_tuple(token, owner);
     }
     bool operator<(vnode x) const {
@@ -64,7 +64,7 @@ set<vnode>
 make_node(node node, unsigned vnodes) {
     return copy_range<set<vnode>>(
             irange(0u, vnodes)
-            | transformed([&] (auto n) { return vnode{random_token(), node}; }));
+            | transformed([&] (unsigned n) { return vnode{random_token(), node}; }));
 }
 
 set<vnode>

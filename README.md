@@ -8,7 +8,7 @@ Shardsim is a program that simulates the node- and core- data distribution algor
 
 The parameters are:
 
- - `--node` - the number of nodes in the cluster. The simulation assumes RF=1 and no data centers.
+ - `--nodes` - the number of nodes in the cluster. The simulation assumes RF=1 and no data centers.
  - `--vnodes` - the number of vnodes the database was configured with
  - `--shards` - the number of shards (logical cores) per node (ScyllaDB specific)
  - `--ignore-msb-bits` - ScyllaDB parameter to adjust the sharding algorithm to reduce shard over-utilization (to be described in a future blog post)

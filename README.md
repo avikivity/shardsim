@@ -1,8 +1,8 @@
-# Shardsim - ScyllaDB / Cassandra sharding simulator
+# Shardsim - ScyllaDB / Apache Cassandra sharding simulator
 
 ## Background
 
-Both [ScyllaDB](https://www.scylladb.com) and [Cassandra](https://cassandra.apache.org) automatically distribute data across nodes based on a randomized algorithm. ScyllaDB in addition distributes data within a node among cores (using a static algorithm). These distributions are susceptible to over-utilization of a node or a core; since a cluster in general runs at the speed of the slowest node, this has significant applications on throughput.
+Both [ScyllaDB](https://www.scylladb.com) and [Apache Cassandra](https://cassandra.apache.org) automatically distribute data across nodes based on a randomized algorithm. ScyllaDB in addition distributes data within a node among cores (using a static algorithm). These distributions are susceptible to over-utilization of a node or a core; since a cluster in general runs at the speed of the slowest node, this has significant applications on throughput.
 
 Shardsim is a program that simulates the node- and core- data distribution algorithm with various parameters.
 
@@ -44,3 +44,7 @@ maximum shard overcommit: 1.088612
 ```
 
 Success! Node overcommit is just 7% over the average, while shard overcommit is just 9%.
+
+## Trademark notice
+
+Apache Cassandra® and Apache® are either trademarks or registered trademarks of the <a href="http://www.apache.org/">Apache Software Foundation</a> in the United States and/or other countries.

@@ -56,7 +56,7 @@ struct vnode {
 double
 random_token() {
     static auto dist = std::uniform_real_distribution<double>(0, 1);
-    static auto re = std::default_random_engine();
+    static auto re = std::default_random_engine(std::random_device()());
     return dist(re);
 }
 

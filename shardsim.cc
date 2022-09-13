@@ -53,10 +53,11 @@ struct vnode {
     }
 };
 
+static std::default_random_engine re;
+
 double
 random_token() {
     static auto dist = std::uniform_real_distribution<double>(0, 1);
-    static auto re = std::default_random_engine(std::random_device()());
     return dist(re);
 }
 
@@ -196,6 +197,7 @@ int main(int ac, char** av) {
                 ("ignore-msb-bits,b", bpo::value<unsigned>()->default_value(8), "Number of token MSB bits to ignore for sharding")
                 ("algorithm,a", bpo::value<string>()->default_value("static"),
                         "select sharding algorithm ({})" /*'.format(algorithms.keys()) */)
+                ("random-seed", bpo::value<unsigned>()->default_value(std::random_device()()), "Random number generator seed")
                 ("help,h", "show this help")
                 ;
         auto vm = bpo::variables_map();
@@ -209,6 +211,8 @@ int main(int ac, char** av) {
         auto vnodes = vm["vnodes"].as<unsigned>();
         shards = vm["shards"].as<unsigned>();
         ignorebits = vm["ignore-msb-bits"].as<unsigned>();
+        auto seed = vm["random-seed"].as<unsigned>();
+        re.seed(seed);
         auto make_shard_intervals = algorithms[vm["algorithm"].as<string>()];
         std::cout << boost::format("%d nodes, %d vnodes, %d shards\n") % nodes % vnodes % shards;
 
@@ -216,6 +220,7 @@ int main(int ac, char** av) {
 
         std::cout << boost::format("maximum node overcommit:  %g\n") % node_overcommit(ring);
         std::cout << boost::format("maximum shard overcommit: %f\n") % shard_overcommit(ring, shards, make_shard_intervals);
+        std::cout << boost::format("random seed: %d\n") % seed;
         return 0;
     } catch (bpo::error& e) {
         std::cout << "Bad parameters, try --help (" << e.what() << ")\n";

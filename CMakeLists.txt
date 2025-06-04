@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.1.3)
 project(shardsim)
 
 set(CMAKE_CXX_STANDARD 23)
+add_compile_options(-O3)
 
 find_package(Boost REQUIRED COMPONENTS program_options)
 

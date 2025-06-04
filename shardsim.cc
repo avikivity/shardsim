@@ -6,6 +6,8 @@
 #include <tuple>
 #include <set>
 #include <unordered_map>
+#include <ranges>
+#include <format>
 #include <boost/range.hpp>
 #include <boost/range/irange.hpp>
 #include <boost/range/algorithm.hpp>
@@ -195,7 +197,7 @@ int main(int ac, char** av) {
                 ("shards,s", bpo::value<unsigned>()->default_value(12u), "Number of shards per node")
                 ("ignore-msb-bits,b", bpo::value<unsigned>()->default_value(8), "Number of token MSB bits to ignore for sharding")
                 ("algorithm,a", bpo::value<string>()->default_value("static"),
-                        "select sharding algorithm ({})" /*'.format(algorithms.keys()) */)
+                        std::format("select sharding algorithm ({})", algorithms | std::views::keys).c_str())
                 ("help,h", "show this help")
                 ;
         auto vm = bpo::variables_map();

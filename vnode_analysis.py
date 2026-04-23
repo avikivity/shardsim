@@ -59,11 +59,11 @@ def main():
     # Parse command-line arguments
     parser = argparse.ArgumentParser(description="Vnode analysis tool")
     parser.add_argument('--nodes', type=int, default=6, help='Number of nodes (default: 6)')
-    parser.add_argument('--tokens-per-vnode', type=int, default=256, help='Tokens per vnode (default: 256)')
+    parser.add_argument('--tokens-per-node', type=int, default=256, help='Tokens per vnode (default: 256)')
     args = parser.parse_args()
 
     num_nodes = args.nodes
-    tokens_per_node = args.tokens_per_vnode
+    tokens_per_node = args.tokens_per_node
 
     print(f"Analyzing vnode distribution for {num_nodes} nodes, {tokens_per_node} tokens/node\n")
 
